@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .random-image {
+      position: absolute;
+      width: 100px; /* 이미지 폭 조절 */
+      height: 100px; /* 이미지 높이 조절 */
+      transition: opacity 2s ease-out; /* 투명도 조절을 위한 트랜지션 */
+      cursor: pointer; /* 커서를 손가락 모양으로 변경하여 사용자에게 클릭 가능성을 시각적으로 알림 */
+    }
+  </style>
+  <script>
+    function showRandomImage() {
+      var userInput = document.getElementById('userInput');
+      var word = userInput.value;
+
+      // 단어 추가
+      if (word === '카톡') {
+        word = '카카오톡';
+      } else if (word === '톡' || word === 'ㅋㅌ') {
+        word = '카카오톡';
+      }
+
+      if (word === '인스타') {
+        word = '인스타그램';
+      } else if (word === '인별' || word === '인별그램') {
+        word = '인스타그램';
+      }
+
+      // 이미지, 소리 설정
+      var imageUrl = '';
+      var soundUrl = '';
+      var clickSoundUrl = '';
+      if (word === '카카오톡') {
+        imageUrl = 'img/test.png';
+        soundUrl = 'mp3/카카오톡.mp3'; // 처음에 나오는 소리
+        clickSoundUrl = 'mp3/버리기.mp3'; // 이미지를 클릭했을 때 나오는 소리
+      } else if (word === '인스타그램') {
+        imageUrl = 'img/test2.png';
+        soundUrl = 'mp3/아이폰.mp3'; // 처음에 나오는 소리
+        clickSoundUrl = 'mp3/버리기.mp3'; // 이미지를 클릭했을 때 나오는 소리
+      } else {
+        imageUrl = 'img/test3.png';
+        soundUrl = 'mp3/알람.mp3'; // 처음에 나오는 소리
+        clickSoundUrl = 'mp3/버리기.mp3'; // 이미지를 클릭했을 때 나오는 소리
+      }
+
+      if (imageUrl && soundUrl && clickSoundUrl) {
+        var image = document.createElement('img');
+        image.src = imageUrl;
+        image.className = 'random-image';
+
+        var audio = document.createElement('audio');
+        audio.src = soundUrl;
+
+        // 랜덤한 위치 계산
+        var randomX = Math.floor(Math.random() * (window.innerWidth - 100));
+        var randomY = Math.floor(Math.random() * (window.innerHeight - 100));
+
+        image.style.left = randomX + 'px';
+        image.style.top = randomY + 'px';
+
+        document.body.appendChild(image);
+        document.body.appendChild(audio);
+
+        // 처음 이미지가 나타날 때 소리 재생
+        audio.play();
+
+        // 이미지를 클릭하면 소리 재생, 이미지가 천천히 사라지기
+        image.addEventListener('click', function() {
+          var clickAudio = document.createElement('audio');
+          clickAudio.src = clickSoundUrl;
+          clickAudio.play();
+          
+          var opacity = 1;
+          var fadeOutInterval = setInterval(function() {
+            opacity -= 0.05;
+            image.style.opacity = opacity;
+            
+            if (opacity <= 0) {
+              clearInterval(fadeOutInterval);
+              document.body.removeChild(image);
+              document.body.removeChild(audio);
+              document.body.removeChild(clickAudio);
+            }
+          }, 20);
+        });
+
+        // 입력 필드 비우기
+        userInput.value = '';
+      } else {
+        alert('단어를 입력해주세요');
+      }
+    }
+
+    // 엔터 키 입력 감지
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        showRandomImage();
+      }
+    }
+  </script>
+</head>
+<body>
+  <input type="text" id="userInput" onkeypress="handleKeyPress(event)">
+  <label for="userInput"><br>사용하는 SNS를 입력해보세요. (예: 카톡, 인스타)</label>
+</body>
+</html>
